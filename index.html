@@ -438,6 +438,44 @@
     /* Hidden audio elements */
     audio { display: none; }
 
+    /* Category tags */
+    .categories-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      margin-top: 4px;
+    }
+
+    .category-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.02em;
+      padding: 4px 10px;
+      border-radius: 100px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .story-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      font-style: italic;
+      margin-top: 2px;
+    }
+
+    .question-text {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+      text-align: center;
+      line-height: 1.5;
+      margin-top: 4px;
+    }
+
     /* Response playing state */
     .response-section {
       display: none;
@@ -460,6 +498,10 @@
       </p>
     </div>
     <div class="home-stats">
+      <div class="stat">
+        <span class="stat-value" id="totalStoriesHome">—</span>
+        <span class="stat-label">Stories</span>
+      </div>
       <div class="stat">
         <span class="stat-value" id="totalQuestionsHome">—</span>
         <span class="stat-label">Questions</span>
@@ -489,6 +531,9 @@
       <!-- Question section -->
       <div class="card-section" id="questionSection">
         <span class="section-label">Question</span>
+        <div class="story-label" id="storyLabel"></div>
+        <div class="question-text" id="questionText"></div>
+        <div class="categories-row" id="categoriesRow"></div>
         <div class="audio-status" id="questionStatus">
           <div class="audio-pulse"></div>
           <span>Playing question…</span>
@@ -601,43 +646,373 @@
     // ============================================================
 
     const QUESTIONS = [
+      // ============================================================
+      // Story 1: Why I Want to Move from TM to PM
+      // ============================================================
       {
-        questionAudio: "audio/one-one.mp3",
-        responseAudio: "audio/one-response.mp3",
+        questionAudio: "audio/s01-q01.mp3",
+        responseAudio: "audio/s01-response.mp3",
         expectedTime: 120,
-        label: "Tell me about yourself"
+        label: "Why do you want to leave management?",
+        story: "Story 1 · TM → PM Transition",
+        categories: ["Motivation & Fit", "Strategic vs. Tactical", "Executive Presence"]
       },
       {
-        questionAudio: "audio/one-two.mp3",
-        responseAudio: "audio/one-response.mp3",
+        questionAudio: "audio/s01-q02.mp3",
+        responseAudio: "audio/s01-response.mp3",
+        expectedTime: 120,
+        label: "Tell me about yourself",
+        story: "Story 1 · TM → PM Transition",
+        categories: ["Motivation & Fit", "Strategic vs. Tactical", "Executive Presence"]
+      },
+      {
+        questionAudio: "audio/s01-q03.mp3",
+        responseAudio: "audio/s01-response.mp3",
+        expectedTime: 120,
+        label: "Why are you the right fit for a PM role?",
+        story: "Story 1 · TM → PM Transition",
+        categories: ["Motivation & Fit", "Strategic vs. Tactical", "Executive Presence"]
+      },
+      {
+        questionAudio: "audio/s01-q04.mp3",
+        responseAudio: "audio/s01-response.mp3",
         expectedTime: 90,
-        label: "Why do you want to leave management?"
+        label: "What motivates you professionally?",
+        story: "Story 1 · TM → PM Transition",
+        categories: ["Motivation & Fit", "Strategic vs. Tactical", "Executive Presence"]
       },
+
+      // ============================================================
+      // Story 2A: Follow-the-Sun Regionalization
+      // ============================================================
       {
-        questionAudio: "audio/one-three.mp3",
-        responseAudio: "audio/one-response.mp3",
+        questionAudio: "audio/s02a-q01.mp3",
+        responseAudio: "audio/s02a-response.mp3",
         expectedTime: 120,
-        label: "Why are you the right fit for a program manager role?"
+        label: "Driving change across multiple regions",
+        story: "Story 2A · Follow-the-Sun Regionalization",
+        categories: ["Global Coordination", "Influencing Without Authority", "Change Management", "Delivery Under Constraints"]
       },
       {
-        questionAudio: "audio/one-four.mp3",
-        responseAudio: "audio/one-response.mp3",
+        questionAudio: "audio/s02a-q02.mp3",
+        responseAudio: "audio/s02a-response.mp3",
+        expectedTime: 120,
+        label: "Leading without authority",
+        story: "Story 2A · Follow-the-Sun Regionalization",
+        categories: ["Global Coordination", "Influencing Without Authority", "Change Management", "Delivery Under Constraints"]
+      },
+      {
+        questionAudio: "audio/s02a-q03.mp3",
+        responseAudio: "audio/s02a-response.mp3",
         expectedTime: 90,
-        label: "What motivate you professionally"
+        label: "Managing competing priorities",
+        story: "Story 2A · Follow-the-Sun Regionalization",
+        categories: ["Global Coordination", "Influencing Without Authority", "Change Management", "Delivery Under Constraints"]
       },
       {
-        questionAudio: "audio/q05-question.mp3",
-        responseAudio: "audio/q05-response.mp3",
-        expectedTime: 120,
-        label: "Ambiguous problem"
+        questionAudio: "audio/s02a-q04.mp3",
+        responseAudio: "audio/s02a-response.mp3",
+        expectedTime: 90,
+        label: "Delivering under tight constraints",
+        story: "Story 2A · Follow-the-Sun Regionalization",
+        categories: ["Global Coordination", "Influencing Without Authority", "Change Management", "Delivery Under Constraints"]
       },
-      // ---- Add more questions below ----
-      // {
-      //   questionAudio: "audio/q06-question.mp3",
-      //   responseAudio: "audio/q06-response.mp3",
-      //   expectedTime: 90,
-      //   label: "Your label here"
-      // },
+
+      // ============================================================
+      // Story 2B: Transaction Zero — Automation ($500K+)
+      // ============================================================
+      {
+        questionAudio: "audio/s02b-q01.mp3",
+        responseAudio: "audio/s02b-response.mp3",
+        expectedTime: 120,
+        label: "Large-scale process improvement",
+        story: "Story 2B · Transaction Zero Automation",
+        categories: ["Process Improvement", "Cross-Functional Work", "Data-Driven Influence", "Program Complexity"]
+      },
+      {
+        questionAudio: "audio/s02b-q02.mp3",
+        responseAudio: "audio/s02b-response.mp3",
+        expectedTime: 90,
+        label: "Prioritizing competing initiatives",
+        story: "Story 2B · Transaction Zero Automation",
+        categories: ["Process Improvement", "Cross-Functional Work", "Data-Driven Influence", "Program Complexity"]
+      },
+      {
+        questionAudio: "audio/s02b-q03.mp3",
+        responseAudio: "audio/s02b-response.mp3",
+        expectedTime: 120,
+        label: "Using data to drive decisions",
+        story: "Story 2B · Transaction Zero Automation",
+        categories: ["Process Improvement", "Cross-Functional Work", "Data-Driven Influence", "Program Complexity"]
+      },
+      {
+        questionAudio: "audio/s02b-q04.mp3",
+        responseAudio: "audio/s02b-response.mp3",
+        expectedTime: 120,
+        label: "Sustained program delivery over years",
+        story: "Story 2B · Transaction Zero Automation",
+        categories: ["Process Improvement", "Cross-Functional Work", "Data-Driven Influence", "Program Complexity"]
+      },
+
+      // ============================================================
+      // Story 3: Consignment Transformation & Jigsaw
+      // ============================================================
+      {
+        questionAudio: "audio/s03-q01.mp3",
+        responseAudio: "audio/s03-response.mp3",
+        expectedTime: 120,
+        label: "Solving a problem with no clear path",
+        story: "Story 3 · Consignment & Jigsaw",
+        categories: ["Handling Ambiguity", "Data-Driven Influence", "Program Complexity", "Pushing Back", "Stakeholder Alignment"]
+      },
+      {
+        questionAudio: "audio/s03-q02.mp3",
+        responseAudio: "audio/s03-response.mp3",
+        expectedTime: 120,
+        label: "Pushing back on a proposed solution",
+        story: "Story 3 · Consignment & Jigsaw",
+        categories: ["Handling Ambiguity", "Data-Driven Influence", "Program Complexity", "Pushing Back", "Stakeholder Alignment"]
+      },
+      {
+        questionAudio: "audio/s03-q03.mp3",
+        responseAudio: "audio/s03-response.mp3",
+        expectedTime: 120,
+        label: "Program with significant financial impact",
+        story: "Story 3 · Consignment & Jigsaw",
+        categories: ["Handling Ambiguity", "Data-Driven Influence", "Program Complexity", "Pushing Back", "Stakeholder Alignment"]
+      },
+      {
+        questionAudio: "audio/s03-q04.mp3",
+        responseAudio: "audio/s03-response.mp3",
+        expectedTime: 120,
+        label: "Rebuilding a team or function from scratch",
+        story: "Story 3 · Consignment & Jigsaw",
+        categories: ["Handling Ambiguity", "Data-Driven Influence", "Program Complexity", "Pushing Back", "Stakeholder Alignment"]
+      },
+
+      // ============================================================
+      // Story 4: Platform Modernization — 80 to 40 Apps
+      // ============================================================
+      {
+        questionAudio: "audio/s04-q01.mp3",
+        responseAudio: "audio/s04-response.mp3",
+        expectedTime: 120,
+        label: "Leading a technology transformation",
+        story: "Story 4 · Platform Modernization",
+        categories: ["Change Management", "Risk Management", "Technical Communication", "Strategic vs. Tactical", "Team Development"]
+      },
+      {
+        questionAudio: "audio/s04-q02.mp3",
+        responseAudio: "audio/s04-response.mp3",
+        expectedTime: 120,
+        label: "Stakeholders through unwanted change",
+        story: "Story 4 · Platform Modernization",
+        categories: ["Change Management", "Risk Management", "Technical Communication", "Strategic vs. Tactical", "Team Development"]
+      },
+      {
+        questionAudio: "audio/s04-q03.mp3",
+        responseAudio: "audio/s04-response.mp3",
+        expectedTime: 90,
+        label: "Rebuilding a team for a new strategy",
+        story: "Story 4 · Platform Modernization",
+        categories: ["Change Management", "Risk Management", "Technical Communication", "Strategic vs. Tactical", "Team Development"]
+      },
+      {
+        questionAudio: "audio/s04-q04.mp3",
+        responseAudio: "audio/s04-response.mp3",
+        expectedTime: 90,
+        label: "Managing compliance-driven changes (GDPR)",
+        story: "Story 4 · Platform Modernization",
+        categories: ["Change Management", "Risk Management", "Technical Communication", "Strategic vs. Tactical", "Team Development"]
+      },
+
+      // ============================================================
+      // Story 5: SDSL — Decade of Partner Overpayment
+      // ============================================================
+      {
+        questionAudio: "audio/s05-q01.mp3",
+        responseAudio: "audio/s05-response.mp3",
+        expectedTime: 120,
+        label: "Discovering a problem nobody knew existed",
+        story: "Story 5 · SDSL Overpayment Discovery",
+        categories: ["Pushing Back", "Data-Driven Influence", "Process Improvement", "Stakeholder Alignment", "Risk Management"]
+      },
+      {
+        questionAudio: "audio/s05-q02.mp3",
+        responseAudio: "audio/s05-response.mp3",
+        expectedTime: 120,
+        label: "Delivering uncomfortable findings to leadership",
+        story: "Story 5 · SDSL Overpayment Discovery",
+        categories: ["Pushing Back", "Data-Driven Influence", "Process Improvement", "Stakeholder Alignment", "Risk Management"]
+      },
+      {
+        questionAudio: "audio/s05-q03.mp3",
+        responseAudio: "audio/s05-response.mp3",
+        expectedTime: 120,
+        label: "Fixing a systemic process failure",
+        story: "Story 5 · SDSL Overpayment Discovery",
+        categories: ["Pushing Back", "Data-Driven Influence", "Process Improvement", "Stakeholder Alignment", "Risk Management"]
+      },
+      {
+        questionAudio: "audio/s05-q04.mp3",
+        responseAudio: "audio/s05-response.mp3",
+        expectedTime: 90,
+        label: "Using data to influence decisions",
+        story: "Story 5 · SDSL Overpayment Discovery",
+        categories: ["Pushing Back", "Data-Driven Influence", "Process Improvement", "Stakeholder Alignment", "Risk Management"]
+      },
+
+      // ============================================================
+      // Story 6: KBB — $400K+ Automation Logic Gap
+      // ============================================================
+      {
+        questionAudio: "audio/s06-q01.mp3",
+        responseAudio: "audio/s06-response.mp3",
+        expectedTime: 120,
+        label: "Hidden risk in an automated process",
+        story: "Story 6 · KBB Automation Gap",
+        categories: ["Risk Management", "Data-Driven Influence", "Process Improvement", "Delivery Under Constraints"]
+      },
+      {
+        questionAudio: "audio/s06-q02.mp3",
+        responseAudio: "audio/s06-response.mp3",
+        expectedTime: 90,
+        label: "Validating existing processes",
+        story: "Story 6 · KBB Automation Gap",
+        categories: ["Risk Management", "Data-Driven Influence", "Process Improvement", "Delivery Under Constraints"]
+      },
+      {
+        questionAudio: "audio/s06-q03.mp3",
+        responseAudio: "audio/s06-response.mp3",
+        expectedTime: 90,
+        label: "Building governance around existing systems",
+        story: "Story 6 · KBB Automation Gap",
+        categories: ["Risk Management", "Data-Driven Influence", "Process Improvement", "Delivery Under Constraints"]
+      },
+      {
+        questionAudio: "audio/s06-q04.mp3",
+        responseAudio: "audio/s06-response.mp3",
+        expectedTime: 90,
+        label: "Catching something others missed",
+        story: "Story 6 · KBB Automation Gap",
+        categories: ["Risk Management", "Data-Driven Influence", "Process Improvement", "Delivery Under Constraints"]
+      },
+
+      // ============================================================
+      // Story 7: AI Content Evaluation Framework
+      // ============================================================
+      {
+        questionAudio: "audio/s07-q01.mp3",
+        responseAudio: "audio/s07-response.mp3",
+        expectedTime: 120,
+        label: "Building something from scratch — no playbook",
+        story: "Story 7 · AI Evaluation Framework",
+        categories: ["Cross-Functional Work", "Technical Communication", "Vendor Management", "Handling Ambiguity", "Program Complexity", "Executive Communication"]
+      },
+      {
+        questionAudio: "audio/s07-q02.mp3",
+        responseAudio: "audio/s07-response.mp3",
+        expectedTime: 120,
+        label: "Working with AI or ML teams",
+        story: "Story 7 · AI Evaluation Framework",
+        categories: ["Cross-Functional Work", "Technical Communication", "Vendor Management", "Handling Ambiguity", "Program Complexity", "Executive Communication"]
+      },
+      {
+        questionAudio: "audio/s07-q03.mp3",
+        responseAudio: "audio/s07-response.mp3",
+        expectedTime: 90,
+        label: "Translating technical requirements for non-technical stakeholders",
+        story: "Story 7 · AI Evaluation Framework",
+        categories: ["Cross-Functional Work", "Technical Communication", "Vendor Management", "Handling Ambiguity", "Program Complexity", "Executive Communication"]
+      },
+      {
+        questionAudio: "audio/s07-q04.mp3",
+        responseAudio: "audio/s07-response.mp3",
+        expectedTime: 90,
+        label: "Managing vendor transitions",
+        story: "Story 7 · AI Evaluation Framework",
+        categories: ["Cross-Functional Work", "Technical Communication", "Vendor Management", "Handling Ambiguity", "Program Complexity", "Executive Communication"]
+      },
+      {
+        questionAudio: "audio/s07-q05.mp3",
+        responseAudio: "audio/s07-response.mp3",
+        expectedTime: 90,
+        label: "Establishing governance for a new process",
+        story: "Story 7 · AI Evaluation Framework",
+        categories: ["Cross-Functional Work", "Technical Communication", "Vendor Management", "Handling Ambiguity", "Program Complexity", "Executive Communication"]
+      },
+
+      // ============================================================
+      // Story 8: Reclaiming a Resource from Legacy Obligations
+      // ============================================================
+      {
+        questionAudio: "audio/s08-q01.mp3",
+        responseAudio: "audio/s08-response.mp3",
+        expectedTime: 90,
+        label: "Diplomatically reclaiming resources",
+        story: "Story 8 · Reclaiming Resources",
+        categories: ["Influencing Without Authority", "Competing Priorities", "Stakeholder Alignment"]
+      },
+      {
+        questionAudio: "audio/s08-q02.mp3",
+        responseAudio: "audio/s08-response.mp3",
+        expectedTime: 90,
+        label: "Inherited work misaligned with mission",
+        story: "Story 8 · Reclaiming Resources",
+        categories: ["Influencing Without Authority", "Competing Priorities", "Stakeholder Alignment"]
+      },
+      {
+        questionAudio: "audio/s08-q03.mp3",
+        responseAudio: "audio/s08-response.mp3",
+        expectedTime: 90,
+        label: "Saying no to another organization",
+        story: "Story 8 · Reclaiming Resources",
+        categories: ["Influencing Without Authority", "Competing Priorities", "Stakeholder Alignment"]
+      },
+
+      // ============================================================
+      // Story 9: Core Migration Resistance I Misread
+      // ============================================================
+      {
+        questionAudio: "audio/s09-q01.mp3",
+        responseAudio: "audio/s09-response.mp3",
+        expectedTime: 120,
+        label: "Something didn't go as planned",
+        story: "Story 9 · Migration Resistance (Failure)",
+        categories: ["Failure & Recovery", "Change Management", "Learning Agility", "Team Development"]
+      },
+      {
+        questionAudio: "audio/s09-q02.mp3",
+        responseAudio: "audio/s09-response.mp3",
+        expectedTime: 120,
+        label: "A failure and what you learned",
+        story: "Story 9 · Migration Resistance (Failure)",
+        categories: ["Failure & Recovery", "Change Management", "Learning Agility", "Team Development"]
+      },
+      {
+        questionAudio: "audio/s09-q03.mp3",
+        responseAudio: "audio/s09-response.mp3",
+        expectedTime: 90,
+        label: "Handling resistance to change",
+        story: "Story 9 · Migration Resistance (Failure)",
+        categories: ["Failure & Recovery", "Change Management", "Learning Agility", "Team Development"]
+      },
+      {
+        questionAudio: "audio/s09-q04.mp3",
+        responseAudio: "audio/s09-response.mp3",
+        expectedTime: 90,
+        label: "What would you do differently?",
+        story: "Story 9 · Migration Resistance (Failure)",
+        categories: ["Failure & Recovery", "Change Management", "Learning Agility", "Team Development"]
+      },
+      {
+        questionAudio: "audio/s09-q05.mp3",
+        responseAudio: "audio/s09-response.mp3",
+        expectedTime: 90,
+        label: "Adjusting your leadership approach",
+        story: "Story 9 · Migration Resistance (Failure)",
+        categories: ["Failure & Recovery", "Change Management", "Learning Agility", "Team Development"]
+      },
     ];
 
     // ============================================================
@@ -691,6 +1066,8 @@
       $('totalQuestionsHome').textContent = QUESTIONS.length;
       const totalSecs = QUESTIONS.reduce((sum, q) => sum + q.expectedTime, 0);
       $('totalTimeHome').textContent = formatTimeShort(totalSecs);
+      const storyCount = new Set(QUESTIONS.map(q => q.story)).size;
+      $('totalStoriesHome').textContent = storyCount;
     }
 
     function goHome() {
@@ -719,6 +1096,12 @@
       // Update header
       $('questionCounter').textContent = `Q${currentIndex + 1} / ${shuffled.length}`;
       $('progressBar').style.width = `${((currentIndex) / shuffled.length) * 100}%`;
+
+      // Show story, question text, and categories
+      $('storyLabel').textContent = q.story || '';
+      $('questionText').textContent = q.label || '';
+      $('categoriesRow').innerHTML = (q.categories || [])
+        .map(c => `<span class="category-tag">${c}</span>`).join('');
 
       // Reset card state
       $('answerSection').style.display = 'none';
@@ -803,6 +1186,7 @@
       const q = shuffled[currentIndex];
       results.push({
         label: q.label,
+        story: q.story || '',
         expected: q.expectedTime,
         actual: answerSeconds,
         answered: answered
@@ -920,9 +1304,12 @@
           : `<span style="color:var(--red)">${formatTime(r.actual)}</span>`;
 
         return `
-          <div class="summary-detail-row">
-            <span>Q${i + 1} · ${r.label}</span>
-            <span>${status} <span style="color:var(--text-muted);font-weight:400;"> / ${formatTime(r.expected)}</span></span>
+          <div class="summary-detail-row" style="flex-direction:column;align-items:flex-start;gap:2px;">
+            <div style="display:flex;justify-content:space-between;width:100%;align-items:center;">
+              <span>Q${i + 1} · ${r.label}</span>
+              <span>${status} <span style="color:var(--text-muted);font-weight:400;"> / ${formatTime(r.expected)}</span></span>
+            </div>
+            <span style="font-size:11px;color:var(--text-muted);font-style:italic;">${r.story}</span>
           </div>
         `;
       }).join('');
